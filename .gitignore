@@ -1,5 +1,6 @@
 # .env file with sensitive info
 .env
+.log
 
 # Just stuff I don't want people to see
 /TutorialsIFollowed/

@@ -2,4 +2,5 @@
 .env
 
 # Just stuff I don't want people to see
-/TutorialsIFollowed/
+err.log
+TutorialsIFollowed/

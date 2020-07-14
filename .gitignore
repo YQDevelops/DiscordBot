@@ -1,2 +1,5 @@
+# .env file with sensitive info
 .env
-TutorialsIFollowed/
+
+# Just stuff I don't want people to see
+/TutorialsIFollowed/

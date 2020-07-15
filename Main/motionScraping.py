@@ -40,10 +40,11 @@ def scrapeMotions(source, setToAddTo):
         except UnicodeEncodeError:
             print(f'I got rid of number {rows.index(row)}')
             rows.pop(rows.index(row))#later pop it into a csv file containing all the ones to not use
+
     for row in rows:
         noErrorRows.append(row.prettify())
 
-    goodData=[]
+    goodData = []
     for row in noErrorRows:
         tempString = ""
         #gets rid of <tr></tr> tags but inadvertentlyy gets rid of the last">"
@@ -72,12 +73,6 @@ def scrapeMotions(source, setToAddTo):
     for row in goodData:
         setToAddTo.add(row.pop(3))
 
-# csv_file = open('motion_scrape.csv','w')
-#
-# csv_writer = csv.writer(csv_file)
-# csv_writer.writerow(['Date','Tournament','Round','Motion'])
-
-
 scrapeMotions(soup2013,setOfMotions2013)
 scrapeMotions(soup2014,setOfMotions2014)
 scrapeMotions(soup2015,setOfMotions2015)
@@ -88,21 +83,34 @@ scrapeMotions(soup2019,setOfMotions2019)
 scrapeMotions(soup2020,setOfMotions2020)
 
 def unionOfMotions(first, *args):
-
     return first.union(*args)
 
-setOfMotions =unionOfMotions(setOfMotions2013,setOfMotions2014,
+setOfMotions = unionOfMotions(setOfMotions2013,setOfMotions2014,
                                 setOfMotions2015,setOfMotions2016,
                                 setOfMotions2017,setOfMotions2018,
                                 setOfMotions2019,setOfMotions2020)
 
 
-print(setOfMotions)
-print('nooooooooooooooooooooooooooooo')
-print(len(setOfMotions))
+def setToCSV(theCsv):
+    global setOfMotions
+
+    csv_writer = csv.writer(theCsv)
+    csv_writer.writerow(['Motion'])
+
+    for motion in setOfMotions:
+        if motion == 'Motion':
+            return
+
+        csv_writer.writerow([motion])
+
+    theCsv.close()
+with open('motion_scrape.csv','w') as file:
+    csv_file = file
+    setToCSV(csv_file)
+
 # breakingPoint = 0
 # data2020 = soup2020.find_all('tr')
-#This is a better way to do it. But not sure how. Putting it in the side burner.
+#This is a better way to do it. But not sure how. Putting it on the side burner.
 '''
 motions = []
 for row in rows:
@@ -119,14 +127,3 @@ for row in rows:
         else:
             breakingPoint+=1
 '''
-
-# way to do it from interpreter,
-"""
-theString = <the row of information>
-newString = theString.strip("<tr>\n</tr>") +">"
-for i in newString.split("<th>"):
-    tempString += i
-newString = tempString.split("</th>")
-for i in newString:
-     newString[newString.index(i)] = newString[newString.index(i)].strip(" \n ")
-"""

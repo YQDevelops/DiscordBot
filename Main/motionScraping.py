@@ -1,34 +1,14 @@
 from bs4 import BeautifulSoup
 import requests
 import csv
+from dotenv import load_dotenv
 
 # motions-2013-and-earlier 2290 2014- 964 2015-423 2016-606 2017-364 2018-366 2019-176 2020-20
-motionSource2013 = requests.get('http://hellomotions.com/motions-2013-and-earlier').text
-motionSource2014 = requests.get('http://hellomotions.com/motions2014').text
-motionSource2015 = requests.get('http://hellomotions.com/motions2015').text
-motionSource2016 = requests.get('http://hellomotions.com/motions2016').text
-motionSource2017 = requests.get('http://hellomotions.com/motions2017').text
-motionSource2018 = requests.get('http://hellomotions.com/motions2018').text
-motionSource2019 = requests.get('http://hellomotions.com/motions2019').text
-motionSource2020 = requests.get('http://hellomotions.com/motions2020').text
-soup2013 = BeautifulSoup(motionSource2013,'lxml')
-soup2014 = BeautifulSoup(motionSource2014,'lxml')
-soup2015 = BeautifulSoup(motionSource2015,'lxml')
-soup2016 = BeautifulSoup(motionSource2016,'lxml')
-soup2017 = BeautifulSoup(motionSource2017,'lxml')
-soup2018 = BeautifulSoup(motionSource2018,'lxml')
-soup2019 = BeautifulSoup(motionSource2019,'lxml')
-soup2020 = BeautifulSoup(motionSource2020,'lxml')
+motionSourceAll = requests.get('http://hellomotions.com/search', verify = False).text
 
-setOfMotions2013 = set()
-setOfMotions2014 = set()
-setOfMotions2015 = set()
-setOfMotions2016 = set()
-setOfMotions2017 = set()
-setOfMotions2018 = set()
-setOfMotions2019 = set()
-setOfMotions2020 = set()
+soupAll = BeautifulSoup(motionSourceAll,'lxml')
 
+setOfMotionsAll = set()
 
 def scrapeMotions(source, setToAddTo):
     rows = source.find_all('tr')
@@ -73,40 +53,45 @@ def scrapeMotions(source, setToAddTo):
     for row in goodData:
         setToAddTo.add(row.pop(3))
 
-scrapeMotions(soup2013,setOfMotions2013)
-scrapeMotions(soup2014,setOfMotions2014)
-scrapeMotions(soup2015,setOfMotions2015)
-scrapeMotions(soup2016,setOfMotions2016)
-scrapeMotions(soup2017,setOfMotions2017)
-scrapeMotions(soup2018,setOfMotions2018)
-scrapeMotions(soup2019,setOfMotions2019)
-scrapeMotions(soup2020,setOfMotions2020)
+scrapeMotions(soupAll, setOfMotionsAll)
 
-def unionOfMotions(first, *args):
-    return first.union(*args)
+# def setToCSV(theSet, theCsv):
+#
+#     theSet = list(theSet)
+#     csv_writer = csv.writer(theCsv)
+#     csv_writer.writerow(['Motion'])
+#
+#     for motion in theSet:
+#         if motion == 'Motion':
+#             return
+#         try:
+#             csv_writer.writerow([motion])
+#         except Exception:
+#             pass
+#     theCsv.close()
 
-setOfMotions = unionOfMotions(setOfMotions2013,setOfMotions2014,
-                                setOfMotions2015,setOfMotions2016,
-                                setOfMotions2017,setOfMotions2018,
-                                setOfMotions2019,setOfMotions2020)
+def generatorOfMotionsAll(theSet):
+    for i in theSet:
+        yield i
 
-
-def setToCSV(theCsv):
-    global setOfMotions
-
-    csv_writer = csv.writer(theCsv)
-    csv_writer.writerow(['Motion'])
-
-    for motion in setOfMotions:
-        if motion == 'Motion':
-            return
-
-        csv_writer.writerow([motion])
-
-    theCsv.close()
-with open('motion_scrape.csv','w') as file:
+print(len(setOfMotionsAll))
+gen = generatorOfMotionsAll(setOfMotionsAll)
+with open(f'C:\\Users\\lowye\\github\\Mr.ZimBot\\Main\\motion_scrape.csv','w') as file:
     csv_file = file
-    setToCSV(csv_file)
+    csv_writer = csv.writer(csv_file)
+    csv_writer.writerow(['Motion'])
+    for i in range(5086):
+        motion = next(gen)
+        if motion !="Motion":
+            try:
+                csv_writer.writerow([motion])
+            except Exception:
+                print(motion)
+                pass
+    csv_file.close()
+    setOfMotionsAll= set()
+
+    print(type(setOfMotionsAll))
 
 # breakingPoint = 0
 # data2020 = soup2020.find_all('tr')

@@ -1,5 +1,5 @@
 # Mr.ZimBot  
-__Mr.ZimBot is a tribute to my debate teacher as well a way for my debate server to organise, manage and run debates smoothly.__
+__Mr.ZimBot is a way for my debate server to organise, manage and run debates smoothly.__
 ## Functionality:
 1.   Time Management   
    * Dates
